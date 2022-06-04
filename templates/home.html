@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <title>Chat</title>
+</head>
+
+<body>
+    <div class="container-sm mt-5 w-100 h-100">
+        <div id="log" class="vstack gap-5 border mb-5 h-75 overflow-auto p-3 rounded-3 shadow">
+            <div class="vstack gap-1 message-block flex-grow-0">
+                <div class="badge rounded-pill text-bg-dark block-username">Username</div>
+                <div class="msg">One</div>
+            </div>
+            <div class="vstack gap-1 message-block flex-grow-0">
+                <div class="badge rounded-pill text-bg-dark block-username">#User 786</div>
+                <div class="msg">Three</div>
+            </div>
+            <div class="vstack gap-1 message-block user flex-grow-0">
+                <div class="msg">This is message two</div>
+            </div>
+        </div>
+
+        <form id="form" class="row g-3">
+            <div class="col-8">
+                <input type="hidden" id="username" value="">
+                <input id="chat-text" type="text" class="form-control" value="" autofocus>
+            </div>
+            <div class="col-4">
+                <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+        </form>
+    </div>
+    <script src="/static/js/websocket.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+
+</html>
