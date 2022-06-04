@@ -12,6 +12,10 @@
 
 <body>
     <div class="container-sm mt-5 w-100 h-100">
+        <div>
+            <input type="hidden" id="username" value="">
+        </div>
+
         <div id="log" class="vstack gap-5 border mb-5 h-75 overflow-auto p-3 rounded-3 shadow">
             <div class="vstack gap-1 message-block flex-grow-0">
                 <div class="badge rounded-pill text-bg-dark block-username">Username</div>
@@ -28,7 +32,6 @@
 
         <form id="form" class="row g-3">
             <div class="col-8">
-                <input type="hidden" id="username" value="">
                 <input id="chat-text" type="text" class="form-control" value="" autofocus>
             </div>
             <div class="col-4">

@@ -1,3 +1,6 @@
+const SendMessageType = "Send"
+const ChangeNameType = "ChangeName"
+
 window.onload = function() {
     var conn;
     var msg = document.getElementById("chat-text");
@@ -24,6 +27,7 @@ window.onload = function() {
         }
 
         conn.send(JSON.stringify({
+            type: SendMessageType,
             username: username.value,
             content: msg.value
         }));
