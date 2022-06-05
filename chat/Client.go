@@ -38,11 +38,6 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-var (
-	newline = []byte{'\n'}
-	space   = []byte{' '}
-)
-
 func (c *Client) SetName(newName string) {
 	msg := fmt.Sprint(c.name + " change username to " + newName)
 	log.Print(msg)
@@ -64,8 +59,6 @@ func (c *Client) read() {
 	for {
 		var msg Message
 		err := c.conn.ReadJSON(&msg)
-
-		log.Println(msg)
 
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
