@@ -1,5 +1,6 @@
 const SendMessageType = "Send"
 const ChangeNameType = "ChangeName"
+const NotifyType = "Notify"
 
 window.onload = function() {
     var conn;
@@ -64,7 +65,22 @@ window.onload = function() {
 
         conn.onmessage = function(evt) {
             var message = JSON.parse(evt.data);
-            var item = createMessageBlock(message);
+            var item;
+
+            console.log(message)
+
+            switch (message.type) {
+                case NotifyType:
+                    item = createNotification(message)
+                    break;
+                case ChangeNameType:
+                    item = createNotification(message)
+                    break;
+                case SendMessageType:
+                    item = createMessageBlock(message)
+                    break;
+            }
+
             appendLog(item);
         };
 
@@ -111,5 +127,13 @@ function createWaringBlock() {
 
     item.appendChild(messageBlock);
 
+    return item;
+}
+
+function createNotification(message) {
+    var item = document.createElement("div")
+    item.setAttribute("class", "text-center text-muted fst-italic")
+
+    item.innerHTML = message.content;
     return item;
 }

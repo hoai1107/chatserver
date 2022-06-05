@@ -1,11 +1,9 @@
 package chat
 
 import (
+	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -46,8 +44,11 @@ var (
 )
 
 func (c *Client) SetName(newName string) {
-	log.Println(c.name + " change username to " + newName)
+	msg := fmt.Sprint(c.name + " change username to " + newName)
+	log.Print(msg)
+
 	c.name = newName
+	c.room.broadcast <- NewMessage(NotifyType, c.name, msg)
 }
 
 func (c *Client) read() {
@@ -108,14 +109,6 @@ func (c *Client) write() {
 			}
 		}
 	}
-}
-
-func RandomUsername() string {
-	var name strings.Builder
-	name.WriteString("User ")
-	name.WriteString(strconv.Itoa(rand.Intn(1000)))
-
-	return name.String()
 }
 
 func ServeWs(room *Room, w http.ResponseWriter, r *http.Request) {

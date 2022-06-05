@@ -17,21 +17,27 @@ func NewRoom() *Room {
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
-		broadcast:  make(chan Message),
+		broadcast:  make(chan Message, 5),
 	}
 }
+
 func (r *Room) Run() {
 	for {
 		select {
 		case client := <-r.register:
 			r.clients[client] = true
-			log.Println(client.name + " join.")
+			msg := client.name + " join."
+			log.Println(msg)
+			r.broadcast <- NewMessage(NotifyType, client.name, msg)
+
 		case client := <-r.unregister:
 			if _, ok := r.clients[client]; ok {
 				delete(r.clients, client)
 				close(client.send)
 
-				log.Println(client.name + " left.")
+				msg := client.name + " left."
+				log.Println(msg)
+				r.broadcast <- NewMessage(NotifyType, client.name, msg)
 			}
 		case msg := <-r.broadcast:
 			for c := range r.clients {
