@@ -5,9 +5,24 @@ window.onload = function() {
     var conn;
     var msg = document.getElementById("chat-text");
     var log = document.getElementById("log");
+    var usernameHolder = document.getElementById("username-holder");
+    var changeForm = document.getElementById("change-name-form")
 
     var username = document.getElementById("username");
-    username.value = "User #" + Math.floor(Math.random() * 1000);
+    username.value = usernameHolder.innerHTML = "User #" + Math.floor(Math.random() * 1000);
+
+    changeForm.onsubmit = function(e) {
+        console.log(username.value);
+        usernameHolder.innerHTML = username.value;
+
+        conn.send(JSON.stringify({
+            type: ChangeNameType,
+            username: username.value,
+            content: username.value
+        }));
+
+        return false;
+    }
 
 
     function appendLog(item) {

@@ -45,6 +45,11 @@ var (
 	space   = []byte{' '}
 )
 
+func (c *Client) SetName(newName string) {
+	log.Println(c.name + " change username to " + newName)
+	c.name = newName
+}
+
 func (c *Client) read() {
 	defer func() {
 		c.room.unregister <- c
@@ -68,7 +73,13 @@ func (c *Client) read() {
 			break
 		}
 
-		c.room.broadcast <- msg
+		switch msg.Type {
+		case "Send":
+			c.room.broadcast <- msg
+		case "ChangeName":
+			c.SetName(msg.Username)
+		}
+
 	}
 }
 

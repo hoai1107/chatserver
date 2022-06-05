@@ -11,9 +11,38 @@
 </head>
 
 <body>
-    <div class="container-sm mt-5 w-100 h-100">
-        <div>
-            <input type="hidden" id="username" value="">
+    <div class="container-sm mt-3 w-100 h-100">
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Change Username</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="change-name-form">
+                            <div class="form-group mb-3">
+                                <label for="username" class="col-form-label">Username</label>
+                                <input type="text" value="" id="username" class="form-control">
+                            </div>
+                            <div class="d-flex flex-row-reverse">
+                                <button type="submit" data-bs-dismiss="modal" aria-label="Close" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3 px-3 align-items-center">
+            <div id="username-holder" class="col-6 bg-light bg-opacity-75 rounded-3 align-middle fw-bold">
+                Username
+            </div>
+            <div class="col-3">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-secondary">
+                        Change
+                    </button>
+            </div>
         </div>
 
         <div id="log" class="vstack gap-5 border mb-5 h-75 overflow-auto p-3 rounded-3 shadow">
