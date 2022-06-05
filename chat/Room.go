@@ -1,6 +1,8 @@
 package chat
 
-import "log"
+import (
+	"github.com/hoai1107/chatserver/logwrapper"
+)
 
 type Room struct {
 	register chan *Client
@@ -27,7 +29,7 @@ func (r *Room) Run() {
 		case client := <-r.register:
 			r.clients[client] = true
 			msg := client.name + " join."
-			log.Println(msg)
+			logwrapper.Info(msg)
 			r.broadcast <- NewMessage(NotifyType, client.name, msg)
 
 		case client := <-r.unregister:
@@ -36,7 +38,7 @@ func (r *Room) Run() {
 				close(client.send)
 
 				msg := client.name + " left."
-				log.Println(msg)
+				logwrapper.Info(msg)
 				r.broadcast <- NewMessage(NotifyType, client.name, msg)
 			}
 		case msg := <-r.broadcast:

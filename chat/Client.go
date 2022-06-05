@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/hoai1107/chatserver/logwrapper"
 )
 
 const (
@@ -40,7 +41,7 @@ var upgrader = websocket.Upgrader{
 
 func (c *Client) SetName(newName string) {
 	msg := fmt.Sprint(c.name + " change username to " + newName)
-	log.Print(msg)
+	logwrapper.Info(msg)
 
 	c.name = newName
 	c.room.broadcast <- NewMessage(NotifyType, c.name, msg)
@@ -107,7 +108,7 @@ func (c *Client) write() {
 func ServeWs(room *Room, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		logwrapper.Error(err)
 		return
 	}
 

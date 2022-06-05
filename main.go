@@ -2,13 +2,16 @@ package main
 
 import (
 	"flag"
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/hoai1107/chatserver/chat"
+	"github.com/hoai1107/chatserver/logwrapper"
 )
 
 func main() {
+	logwrapper.InitLogger()
+
 	var addr = flag.String("addr", ":8080", "The address of the app")
 	flag.Parse()
 
@@ -24,10 +27,10 @@ func main() {
 		chat.ServeWs(room, w, r)
 	})
 
-	log.Println("Server is running on ", *addr)
+	logwrapper.Info(fmt.Sprint("Server is running on ", *addr))
 
 	err := http.ListenAndServe(*addr, nil)
 	if err != nil {
-		log.Fatalln("ListenAndServe: ", err)
+		logwrapper.Error(err)
 	}
 }
