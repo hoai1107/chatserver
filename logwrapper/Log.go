@@ -1,7 +1,7 @@
 package logwrapper
 
 import (
-	"os"
+	"reflect"
 	"sync"
 
 	"github.com/sirupsen/logrus"
@@ -12,11 +12,7 @@ var once sync.Once
 
 func InitLogger() {
 	once.Do(func() {
-		log = &logrus.Logger{
-			Out:       os.Stdout,
-			Formatter: new(logrus.TextFormatter),
-			Hooks:     make(logrus.LevelHooks),
-		}
+		log = logrus.New()
 
 		log.SetFormatter(&logrus.TextFormatter{
 			DisableColors: false,
@@ -30,13 +26,18 @@ func Info(args ...interface{}) {
 }
 
 // FIXME: Circular import
-// func InfoMessage(msg chat.Message) {
-// 	log.WithFields(logrus.Fields{
-// 		"type":     msg.Type,
-// 		"username": msg.Username,
-// 		"content":  msg.Content,
-// 	}).Info("Get message.")
-// }
+func InfoMessage(msg interface{}) {
+	val := reflect.ValueOf(msg).Elem()
+	msgType := val.FieldByName("Type").Interface().(string)
+	msgUsername := val.FieldByName("Username").Interface().(string)
+	msgContent := val.FieldByName("Content").Interface().(string)
+
+	log.WithFields(logrus.Fields{
+		"type":     msgType,
+		"username": msgUsername,
+		"content":  msgContent,
+	}).Info("Get message.")
+}
 
 func Error(args ...interface{}) {
 	log.Errorln(args...)
