@@ -25,7 +25,6 @@ func Info(args ...interface{}) {
 	log.Infoln(args...)
 }
 
-// FIXME: Circular import
 func InfoMessage(msg interface{}) {
 	val := reflect.ValueOf(msg).Elem()
 	msgType := val.FieldByName("Type").Interface().(string)

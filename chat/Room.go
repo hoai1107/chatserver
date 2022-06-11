@@ -5,6 +5,8 @@ import (
 )
 
 type Room struct {
+	name string
+
 	register chan *Client
 
 	unregister chan *Client
@@ -14,8 +16,9 @@ type Room struct {
 	broadcast chan Message
 }
 
-func NewRoom() *Room {
+func NewRoom(roomName string) *Room {
 	return &Room{
+		name:       roomName,
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
