@@ -8,6 +8,7 @@ window.onload = function() {
     var log = document.getElementById("log");
     var usernameHolder = document.getElementById("username-holder");
     var changeForm = document.getElementById("change-name-form")
+    var urlParams = new URLSearchParams(window.location.search)
 
     var username = document.getElementById("username");
     username.value = usernameHolder.innerHTML = "User #" + Math.floor(Math.random() * 1000);
@@ -54,7 +55,10 @@ window.onload = function() {
 
     if (window["WebSocket"]) {
         var url = new URL("ws://" + document.location.host + "/ws");
+        const roomName = urlParams.get('room');
+
         url.searchParams.append("username", username.value);
+        url.searchParams.append("room", roomName);
 
         conn = new WebSocket(url.toString());
 

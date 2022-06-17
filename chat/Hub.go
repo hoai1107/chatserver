@@ -13,3 +13,7 @@ func NewHub() *Hub {
 func (h *Hub) RegisterRoom(room *Room) {
 	h.Rooms[room.name] = room
 }
+
+func (h *Hub) RemoveRoom(room *Room) {
+	delete(h.Rooms, room.name)
+}

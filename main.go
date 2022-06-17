@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,7 +10,7 @@ import (
 	"github.com/hoai1107/chatserver/logwrapper"
 )
 
-var hub chat.Hub = *chat.NewHub()
+var hub *chat.Hub = chat.NewHub()
 
 func main() {
 	logwrapper.InitLogger()
@@ -20,41 +18,30 @@ func main() {
 	var addr = flag.String("addr", ":8080", "The address of the app")
 	flag.Parse()
 
-	room := chat.NewRoom("Chat room 1")
-	go room.Run()
-
 	r := mux.NewRouter()
+
+	//Serve static file
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
+	//Routes
 	r.Handle("/", &templateHandler{filename: "index.html"})
-	r.HandleFunc("/create", addRoomHandler)
 	r.Handle("/chat", &templateHandler{filename: "room.html"})
+	r.Handle("/room_list", &templateHandler{filename: "room_list.html"})
+
+	r.HandleFunc("/create", func(w http.ResponseWriter, r *http.Request) {
+		chat.AddRoomHandler(w, r, hub)
+	})
 	r.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		chat.ServeWs(room, w, r)
+		chat.ServeWs(hub, w, r)
+	})
+	r.HandleFunc("/all_rooms", func(w http.ResponseWriter, r *http.Request) {
+		chat.GetAllRoom(w, r, hub)
 	})
 
+	//Start server
 	logwrapper.Info(fmt.Sprint("Server is running on ", *addr))
-
 	err := http.ListenAndServe(*addr, r)
 	if err != nil {
 		logwrapper.Error(err)
 	}
-}
-
-func addRoomHandler(w http.ResponseWriter, r *http.Request) {
-	payload := make(map[string]interface{})
-
-	defer r.Body.Close()
-
-	body, err := ioutil.ReadAll(r.Body)
-
-	if err != nil {
-		logwrapper.Error(err)
-	}
-
-	json.Unmarshal(body, &payload)
-	room := chat.NewRoom(payload["name"].(string))
-	logwrapper.Info("New Room: " + payload["name"].(string))
-
-	hub.RegisterRoom(room)
-	go room.Run()
 }

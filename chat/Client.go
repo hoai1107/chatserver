@@ -107,7 +107,7 @@ func (c *Client) write() {
 	}
 }
 
-func ServeWs(room *Room, w http.ResponseWriter, r *http.Request) {
+func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		logwrapper.Error(err)
@@ -116,6 +116,9 @@ func ServeWs(room *Room, w http.ResponseWriter, r *http.Request) {
 
 	params := r.URL.Query()
 	username := params.Get("username")
+	roomName := params.Get("room")
+
+	room := hub.Rooms[roomName]
 
 	client := &Client{
 		room: room,
