@@ -19,12 +19,17 @@ func AddRoomHandler(w http.ResponseWriter, r *http.Request, hub *Hub) {
 		logwrapper.Error(err)
 	}
 
-	json.Unmarshal(body, &payload)
+	err = json.Unmarshal(body, &payload)
+	if err != nil {
+		logwrapper.Error(err)
+	}
 	room := NewRoom(payload["name"].(string))
 	logwrapper.Info("New Room: " + payload["name"].(string))
 
 	hub.RegisterRoom(room)
 	go room.Run()
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func GetAllRoom(w http.ResponseWriter, r *http.Request, hub *Hub) {

@@ -1,6 +1,7 @@
 package chat
 
 import (
+	"fmt"
 	"github.com/hoai1107/chatserver/logwrapper"
 )
 
@@ -31,7 +32,7 @@ func (r *Room) Run() {
 		select {
 		case client := <-r.register:
 			r.clients[client] = true
-			msg := client.name + " join."
+			msg := fmt.Sprintf("%s joins room %s", client.name, r.name)
 			logwrapper.Info(msg)
 			r.broadcast <- NewMessage(NotifyType, client.name, msg)
 
@@ -40,7 +41,7 @@ func (r *Room) Run() {
 				delete(r.clients, client)
 				close(client.send)
 
-				msg := client.name + " left."
+				msg := fmt.Sprintf("%s lefts room %s", client.name, r.name)
 				logwrapper.Info(msg)
 				r.broadcast <- NewMessage(NotifyType, client.name, msg)
 			}
