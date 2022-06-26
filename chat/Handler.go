@@ -2,8 +2,10 @@ package chat
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 
 	"github.com/hoai1107/chatserver/logwrapper"
 )
@@ -44,4 +46,24 @@ func GetAllRoom(w http.ResponseWriter, r *http.Request, hub *Hub) {
 	resp := make(map[string]interface{})
 	resp["rooms"] = keys
 	json.NewEncoder(w).Encode(resp)
+}
+
+func GetHistory(w http.ResponseWriter, r *http.Request, hub *Hub) {
+	vars := mux.Vars(r)
+	roomName, err := url.QueryUnescape(vars["room_name"])
+	history := hub.Rooms[roomName].history
+
+	if err != nil {
+		logwrapper.Error(err)
+	}
+
+	b, err := json.MarshalIndent(history, "", "\t")
+	if err != nil {
+		logwrapper.Error(err)
+	}
+
+	_, err = w.Write(b)
+	if err != nil {
+		logwrapper.Error(err)
+	}
 }

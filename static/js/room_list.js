@@ -23,7 +23,7 @@ function createRoomLink(name){
 
     item.innerHTML = name;
     item.setAttribute('class', 'btn btn-secondary w-25');
-    item.setAttribute('href', `/chat?room=${name}`);
+    item.setAttribute('href', `/chat/${name}`);
 
     return item;
 }

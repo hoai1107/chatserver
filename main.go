@@ -25,7 +25,7 @@ func main() {
 
 	//Routes
 	r.Handle("/", &templateHandler{filename: "index.html"})
-	r.Handle("/chat", &templateHandler{filename: "room.html"})
+	r.Handle("/chat/{room_name}", &templateHandler{filename: "room.html"})
 	r.Handle("/room_list", &templateHandler{filename: "room_list.html"})
 
 	r.HandleFunc("/create", func(w http.ResponseWriter, r *http.Request) {
@@ -36,6 +36,9 @@ func main() {
 	})
 	r.HandleFunc("/all_rooms", func(w http.ResponseWriter, r *http.Request) {
 		chat.GetAllRoom(w, r, hub)
+	})
+	r.HandleFunc("/chat/{room_name}/history", func(w http.ResponseWriter, r *http.Request) {
+		chat.GetHistory(w, r, hub)
 	})
 
 	//Start server

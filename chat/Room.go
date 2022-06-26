@@ -15,6 +15,8 @@ type Room struct {
 	clients map[*Client]bool
 
 	broadcast chan Message
+
+	history []Message
 }
 
 func NewRoom(roomName string) *Room {
@@ -45,7 +47,9 @@ func (r *Room) Run() {
 				logwrapper.Info(msg)
 				r.broadcast <- NewMessage(NotifyType, client.name, msg)
 			}
+
 		case msg := <-r.broadcast:
+			r.history = append(r.history, msg)
 			for c := range r.clients {
 				select {
 				case c.send <- msg:

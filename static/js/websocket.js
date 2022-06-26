@@ -26,8 +26,21 @@ window.onload = function() {
         return false;
     }
 
+    function appendLog(message) {
+        var item;
 
-    function appendLog(item) {
+        switch (message.type) {
+            case NotifyType:
+                item = createNotification(message)
+                break;
+            case ChangeNameType:
+                item = createNotification(message)
+                break;
+            case SendMessageType:
+                item = createMessageBlock(message)
+                break;
+        }
+
         var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
         log.appendChild(item);
         if (doScroll) {
@@ -54,13 +67,33 @@ window.onload = function() {
     };
 
     if (window["WebSocket"]) {
-        var url = new URL("ws://" + document.location.host + "/ws");
-        const roomName = urlParams.get('room');
+        let url = new URL("ws://" + document.location.host + "/ws");
+        let pathArray = window.location.pathname.split('/');
+        const roomName = pathArray[2];
+        console.log(roomName);
 
         url.searchParams.append("username", username.value);
         url.searchParams.append("room", roomName);
 
         conn = new WebSocket(url.toString());
+
+        // Load old messages
+        conn.onopen = function(evt){
+            let xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function() {
+                if (this.readyState === 4 && this.status === 200) {
+                    let messages = JSON.parse(xhr.responseText)
+                    messages.pop()
+                    messages.forEach((item) => {
+                        appendLog(item)
+                    })
+                }
+            };
+
+            xhr.open('GET', `/chat/${roomName}/history`, true);
+            xhr.send()
+        }
 
         conn.onclose = function(evt) {
             var item = createWaringBlock();
@@ -69,23 +102,7 @@ window.onload = function() {
 
         conn.onmessage = function(evt) {
             var message = JSON.parse(evt.data);
-            var item;
-
-            console.log(message)
-
-            switch (message.type) {
-                case NotifyType:
-                    item = createNotification(message)
-                    break;
-                case ChangeNameType:
-                    item = createNotification(message)
-                    break;
-                case SendMessageType:
-                    item = createMessageBlock(message)
-                    break;
-            }
-
-            appendLog(item);
+            appendLog(message);
         };
 
     } else {
@@ -103,7 +120,7 @@ function createMessageBlock(message) {
     var item = document.createElement("div");
     item.setAttribute("class", "vstack gap-1 message-block flex-grow-0")
 
-    if (username.value == user) {
+    if (username.value === user) {
         item.classList.add("user");
     }
 

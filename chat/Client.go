@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -71,9 +72,9 @@ func (c *Client) read() {
 		}
 
 		switch msg.Type {
-		case "Send":
+		case SendMessageType:
 			c.room.broadcast <- msg
-		case "ChangeName":
+		case ChangeNameType:
 			c.SetName(msg.Username)
 		}
 
@@ -95,7 +96,6 @@ func (c *Client) write() {
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
-
 			c.conn.WriteJSON(msg)
 
 		case <-ticker.C:
@@ -116,7 +116,10 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 	params := r.URL.Query()
 	username := params.Get("username")
-	roomName := params.Get("room")
+	roomName, err := url.QueryUnescape(params.Get("room"))
+	if err != nil {
+		logwrapper.Error(err)
+	}
 
 	room := hub.Rooms[roomName]
 
